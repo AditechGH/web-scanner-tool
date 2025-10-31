@@ -42,11 +42,11 @@ FILE_PATH_DENYLIST: set[str] = {
     # Common vendor/build paths
     "vendor/",
     "node_modules/",
-    "/dist/",
-    "/build/",
-    "/.next/",
-    "/.vercel/",
-    "/.venv/",
+    "dist/",
+    "build/",
+    ".next/",
+    ".vercel/",
+    ".venv/",
 }
 
 # Keywords to check for near a potential secret
