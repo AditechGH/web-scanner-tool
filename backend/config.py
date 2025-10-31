@@ -7,6 +7,9 @@ MAX_FILE_SIZE: int = int(os.getenv("MAX_FILE_SIZE", "750000"))
 # Max number of concurrent file fetching requests
 MAX_CONCURRENT_REQUESTS: int = int(os.getenv("MAX_CONCURRENT_REQUESTS", "10"))
 
+# Cap on total files to scan to prevent memory issues
+MAX_FILES_PER_SCAN: int = int(os.getenv("MAX_FILES_PER_SCAN", "2000"))
+
 # --- Detector Configuration ---
 # File extensions to deny
 FILE_EXT_DENYLIST: set[str] = {
