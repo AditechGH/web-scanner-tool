@@ -3,7 +3,7 @@ import asyncio
 import time
 import base64
 import logging
-import base64.binascii # Import for the b64decode exception
+import binascii  # <-- CORRECT IMPORT
 from typing import List, Dict, Any, Optional
 
 from .models import RateInfo, GitHubFile
@@ -44,7 +44,6 @@ class GitHubClient:
         }
         if token:
             headers["Authorization"] = f"Bearer {token}"
-        
         # Use a more specific timeout
         self._client = httpx.AsyncClient(
             headers=headers, 
@@ -206,15 +205,14 @@ class GitHubClient:
 
             # Use the suggested b64decode fallback order
             try:
-                # Try with validate=False (default, permissive)
                 decoded_bytes = base64.b64decode(content_b64.encode('utf-8'), validate=False)
-            except base64.binascii.Error:
+            except binascii.Error:
                 # Fallback to plain (also validate=False, but good to have)
                 decoded_bytes = base64.b64decode(content_b64.encode('utf-8'))
             
             return decoded_bytes.decode("utf-8", errors="replace")
             
-        except (UnicodeDecodeError, base64.binascii.Error):
+        except (UnicodeDecodeError, binascii.Error):
             logger.warning(f"Binary or non-UTF content at {blob_url}, skipping.")
             return ""
         except Exception as e:
