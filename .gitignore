@@ -1,0 +1,15 @@
+# Python
+*.py[cod]
+__pycache__/
+.venv/
+.env
+
+# Node
+node_modules/
+dist/
+.npm
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
