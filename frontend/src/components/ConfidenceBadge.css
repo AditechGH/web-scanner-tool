@@ -1,0 +1,22 @@
+.badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-high {
+  background-color: #d8000c;
+  color: white;
+}
+
+.badge-medium {
+  background-color: #ffc400;
+  color: #333;
+}
+
+.badge-low {
+  background-color: #555;
+  color: #eee;
+}

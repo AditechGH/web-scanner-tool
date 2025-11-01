@@ -1,0 +1,53 @@
+.no-findings {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #2e2e2e;
+  border: 1px dashed #555;
+  border-radius: 8px;
+}
+.no-findings h2 {
+  margin: 0;
+  color: #6ee66e;
+}
+
+.findings-container {
+  width: 100%;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.findings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.findings-table th,
+.findings-table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #444;
+  vertical-align: top;
+}
+
+.findings-table th {
+  background-color: #333;
+  font-weight: 600;
+}
+
+.findings-table tbody tr:nth-child(odd) {
+  background-color: #2e2e2e;
+}
+
+.cell-path {
+  word-break: break-all;
+}
+.cell-line {
+  text-align: right;
+}
+.cell-snippet code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #f8baba;
+}

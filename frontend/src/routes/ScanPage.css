@@ -1,0 +1,17 @@
+.scan-page-container {
+  width: 100%;
+}
+
+.back-link-container {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.back-link-container a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.back-link-container a:hover {
+  text-decoration: underline;
+}
