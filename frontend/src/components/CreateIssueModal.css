@@ -49,6 +49,7 @@
   background-color: #1e1e1e;
   color: white;
   margin: 0.5rem 0 1rem;
+  box-sizing: border-box;
 }
 
 .submit-btn {
@@ -64,4 +65,44 @@
 }
 .submit-btn:disabled {
   background-color: #555;
+}
+
+.success-header {
+  color: #6ee66e;
+}
+
+.success-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.success-actions a {
+  color: #007bff;
+}
+
+.close-btn-success {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #444;
+  color: white;
+  cursor: pointer;
+}
+.close-btn-success:hover {
+  background-color: #555;
+}
+
+.pat-input.invalid {
+  border-color: #d8000c;
+  outline-color: #d8000c;
+}
+
+.token-error-msg {
+  font-size: 0.85rem;
+  color: #f8baba;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
 }

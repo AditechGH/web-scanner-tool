@@ -55,7 +55,9 @@ export function RateLimitPanel({ error }: RateLimitPanelProps) {
     setToken(newToken);
     // Provide instant feedback if the token format is wrong
     if (newToken.length > 0 && !GITHUB_PAT_REGEX.test(newToken)) {
-      setTokenError("Invalid token format. Must start with ghp_, gho_, etc.");
+      setTokenError(
+        "Invalid format. Token must be at least 40 characters long and start with `ghp_`, `gho_`, etc."
+      );
     } else {
       setTokenError(null);
     }

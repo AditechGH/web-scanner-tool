@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useScanStore } from "../state/useScanStore";
 import { createIssue } from "../lib/githubApi";
 import { buildIssueBody } from "../lib/issueTemplate";
 import "./CreateIssueModal.css";
 import { ErrorBanner } from "./ErrorBanner";
 import type { ScanError } from "../lib/types";
+
+// Simple regex to check for GitHub PAT format
+const GITHUB_PAT_REGEX = /^(ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,255}$/;
 
 interface CreateIssueModalProps {
   onClose: () => void;
@@ -13,19 +16,37 @@ interface CreateIssueModalProps {
 export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
   const [pat, setPat] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<ScanError | null>(null);
+  const [error, setError] = useState<ScanError | null>(null); // <-- Use ScanError type
+  const [tokenError, setTokenError] = useState<string | null>(null);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
 
   const { selectedRepo, scanResult } = useScanStore();
 
+  const isTokenValid = useMemo(() => {
+    if (!pat) return false;
+    return GITHUB_PAT_REGEX.test(pat);
+  }, [pat]);
+
   if (!selectedRepo || !scanResult || scanResult.findings.length === 0) {
-    return null; // Should not be rendered if there are no findings
+    return null;
   }
+
+  const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newToken = e.target.value;
+    setPat(newToken);
+    if (newToken.length > 0 && !GITHUB_PAT_REGEX.test(newToken)) {
+      setTokenError(
+        "Invalid format. Token must be at least 40 characters long and start with `ghp_`, `gho_`, etc."
+      );
+    } else {
+      setTokenError(null);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pat) {
-      setError({ message: "A Personal Access Token is required." });
+    if (!isTokenValid) {
+      setError({ message: "A valid Personal Access Token is required." });
       return;
     }
 
@@ -50,14 +71,17 @@ export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
     return (
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h2 style={{ color: "#6ee66e" }}>✅ Issue Created!</h2>
+          <h2 className="success-header">✅ Issue Created!</h2>
           <p>The maintainers have been notified.</p>
-          <a href={successUrl} target="_blank" rel="noopener noreferrer">
-            View the issue on GitHub
-          </a>
-          <button onClick={onClose} style={{ marginTop: "1rem" }}>
-            Close
-          </button>
+
+          <div className="success-actions">
+            <a href={successUrl} target="_blank" rel="noopener noreferrer">
+              View the issue on GitHub
+            </a>
+            <button onClick={onClose} className="close-btn-success">
+              Close
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -87,11 +111,21 @@ export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
             id="pat"
             type="password"
             value={pat}
-            onChange={(e) => setPat(e.target.value)}
+            onChange={handleTokenChange}
             placeholder="ghp_..."
-            className="pat-input"
+            className={`pat-input ${tokenError ? "invalid" : ""}`}
+            aria-describedby="token-error"
           />
-          <button type="submit" disabled={isLoading} className="submit-btn">
+          {tokenError && (
+            <div id="token-error" className="token-error-msg">
+              {tokenError}
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={isLoading || !isTokenValid}
+            className="submit-btn"
+          >
             {isLoading ? "Creating..." : "Create Issue"}
           </button>
           {error && <ErrorBanner error={error} />}
