@@ -7,6 +7,7 @@ const githubClient = axios.create({
   baseURL: GITHUB_API_URL,
   headers: {
     Accept: "application/vnd.github.v3+json",
+    "X-GitHub-Api-Version": "2022-11-28",
   },
 });
 
@@ -46,13 +47,44 @@ export const searchRepos = async (query: string): Promise<RepoLite[]> => {
 };
 
 /**
- * SKELETON: We will implement this later.
+ * Creates a new issue on a GitHub repository.
+ * @param repoFullName - The full name of the repo (e.g., "owner/repo")
+ * @param body - The Markdown body of the issue
+ * @param pat - The user's Personal Access Token
+ * @returns The URL of the newly created issue
  */
 export const createIssue = async (
   repoFullName: string,
   body: string,
   pat: string
 ): Promise<string> => {
-  console.log("TODO: createIssue", repoFullName, body, pat);
-  return "https://github.com/mock/issue/1";
+  try {
+    const response = await githubClient.post(
+      `/repos/${repoFullName}/issues`,
+      {
+        title: "Potential Secrets Detected in Repository",
+        body: body,
+      },
+      {
+        // This is the key: we send the PAT as an auth header
+        // for this one request.
+        headers: {
+          Authorization: `Bearer ${pat}`,
+        },
+      }
+    );
+    // Return the URL of the new issue
+    return response.data.html_url;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 403) {
+        throw new Error("Invalid GitHub Token or insufficient permissions.");
+      }
+      if (error.response.status === 410) {
+        throw new Error("Issues are disabled for this repository.");
+      }
+      throw new Error(`GitHub API error: ${error.response.data.message}`);
+    }
+    throw new Error("A network error occurred while creating the issue.");
+  }
 };

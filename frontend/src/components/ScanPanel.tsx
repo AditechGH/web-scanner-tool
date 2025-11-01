@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useScanStore } from "../state/useScanStore";
 import { ErrorBanner } from "./ErrorBanner";
 import { FindingsTable } from "./FindingsTable";
+import { CreateIssueModal } from "./CreateIssueModal";
 import "./ScanPanel.css";
 
 export function ScanPanel() {
   // Get all the state and actions we need from our store
   const { status, error, scanResult, startScan } = useScanStore();
+  // State to manage if the modal is open
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // This useEffect will run when the component loads.
   // It checks if a scan is 'idle' (meaning it hasn't run yet)
@@ -39,10 +42,28 @@ export function ScanPanel() {
 
   // 3. Show Success State
   if (status === "success" && scanResult) {
+    const hasFindings = scanResult.findings.length > 0;
+
     return (
       <div className="scan-panel">
-        {/* We will add a "Report Findings" button here later */}
+        {/* Only show the button if secrets were found */}
+        {hasFindings && (
+          <div className="report-header">
+            <button
+              className="report-button"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Report Findings to Maintainers
+            </button>
+          </div>
+        )}
+
         <FindingsTable findings={scanResult.findings} />
+
+        {/* Render the modal if it's open */}
+        {isModalOpen && (
+          <CreateIssueModal onClose={() => setIsModalOpen(false)} />
+        )}
       </div>
     );
   }

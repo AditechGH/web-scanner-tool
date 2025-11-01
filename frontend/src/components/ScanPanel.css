@@ -32,3 +32,22 @@
     transform: rotate(360deg);
   }
 }
+
+.report-header {
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.report-button {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  background-color: #c9302c; /* Red button */
+  color: white;
+  cursor: pointer;
+}
+.report-button:hover {
+  background-color: #a92824;
+}
