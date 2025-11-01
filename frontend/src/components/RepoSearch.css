@@ -65,3 +65,42 @@
 .result-item:hover {
   background-color: #404040;
 }
+
+.input-wrapper {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+}
+.input-wrapper input {
+  width: 100%;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  height: 100%;
+  width: 40px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.clear-btn:hover {
+  color: white;
+}
+
+.no-results {
+  padding: 2rem;
+  color: #aaa;
+  font-style: italic;
+  background-color: #2e2e2e;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
