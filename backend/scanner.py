@@ -48,8 +48,11 @@ class RepoScanner:
                 
                 return findings
 
+            except GitHubAPIError:
+                # Re-raise API errors to be caught by asyncio.gather
+                raise
             except Exception as e:
-                # Log errors but don't stop the whole scan
+                # Log other errors but don't stop the whole scan
                 logger.error(f"Failed to scan file {file.path}: {e}")
                 return []
 
@@ -114,7 +117,14 @@ class RepoScanner:
 
         # 4. Create and run all scan tasks
         tasks = [self._fetch_and_scan_file(file) for file in scannable_files]
-        results = await asyncio.gather(*tasks)
+
+        try:
+            results = await asyncio.gather(*tasks)
+        except GitHubAPIError as e:
+            # If any task fails with an API error, stop the scan
+            # and re-raise the error to be caught by main.py
+            logger.warning(f"Scan stopped due to API error: {e}")
+            raise e
         
         # 5. Aggregate results
         for file_findings in results:

@@ -3,7 +3,7 @@ import asyncio
 import time
 import base64
 import logging
-import binascii  # <-- CORRECT IMPORT
+import binascii
 from typing import List, Dict, Any, Optional
 
 from .models import RateInfo, GitHubFile
@@ -68,12 +68,6 @@ class GitHubClient:
         """
         A private, rate-limit-aware and resilient request helper.
         """
-        
-        if self._rate_info.remaining < 10:
-            sleep_time = self._rate_info.reset_at - int(time.time()) + 1
-            if sleep_time > 0:
-                logger.warning(f"Rate limit low ({self._rate_info.remaining}), sleeping for {sleep_time}s")
-                await asyncio.sleep(sleep_time)
 
         full_url = url if url.startswith("https://") else f"{self.BASE_URL}{url}"
         
@@ -88,7 +82,6 @@ class GitHubClient:
                 
                 logger.debug(f"Retrying {method} {full_url} (attempt {attempt+1}) after {backoff}s")
                 await asyncio.sleep(backoff)
-                backoff *= 2
                 continue
 
             if "X-RateLimit-Remaining" in response.headers and "X-RateLimit-Reset" in response.headers:
@@ -211,7 +204,10 @@ class GitHubClient:
                 decoded_bytes = base64.b64decode(content_b64.encode('utf-8'))
             
             return decoded_bytes.decode("utf-8", errors="replace")
-            
+        
+        except RateLimitExceededError:
+            # Bubble up so the scanner can stop early and return 429
+            raise
         except (UnicodeDecodeError, binascii.Error):
             logger.warning(f"Binary or non-UTF content at {blob_url}, skipping.")
             return ""
