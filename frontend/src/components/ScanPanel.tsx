@@ -35,7 +35,7 @@ export function ScanPanel() {
   if (status === "error" && error) {
     return (
       <div className="scan-panel">
-        <ErrorBanner message={error.message} />
+        <ErrorBanner error={error} />
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import logging
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import our scanner, client, and models
@@ -51,11 +52,7 @@ async def root():
     """
     return {"message": "Hello from the Secret Hunter API!"}
 
-@app.post(
-    "/api/scan",
-    response_model=ScanResponse,
-    response_model_exclude_none=True,  # optional
-)
+@app.post("/api/scan")
 async def scan_repository(request: ScanRequest):
     """
     Main endpoint to scan a public GitHub repository.
@@ -71,17 +68,26 @@ async def scan_repository(request: ScanRequest):
     try:
         scan_response = await scanner.scan(owner=request.owner, repo=request.repo)
         # Return the Pydantic model; FastAPI will serialize with aliases.
-        return scan_response
+        return scan_response.model_dump(by_alias=True)
 
     except RepositoryNotFoundError:
         logger.warning(f"Repo not found: {request.owner}/{request.repo}")
         raise HTTPException(status_code=404,
                             detail=f"Repository not found: {request.owner}/{request.repo}")
-
+    
     except RateLimitExceededError as e:
-        logger.warning(f"Rate limit exceeded for {request.owner}/{request.repo}: {e}")
-        raise HTTPException(status_code=429,
-                            detail=f"GitHub API rate limit exceeded. Please try again later. {e}")
+        logger.warning(f"Scan failed: Rate limit exceeded for {request.owner}/{request.repo}. {e}")
+        # Get the reset time from the client
+        reset_time = client.rate_info.reset_at
+        
+        # Return a custom JSONResponse with status 429
+        return JSONResponse(
+            status_code=429,
+            content={
+                "detail": f"GitHub API rate limit exceeded. {e}",
+                "resetAt": reset_time  # Pass the reset time to the frontend
+            }
+        )
 
     except GitHubAPIError as e:
         logger.error(f"GitHub upstream error for {request.owner}/{request.repo}: {e}")

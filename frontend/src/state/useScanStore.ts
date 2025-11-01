@@ -65,11 +65,23 @@ export const useScanStore = create<ScanState>((set, get) => ({
       // 3. Set success state
       set({ scanResult: result, status: "success" });
     } catch (err) {
-      // 4. Set error state
-      const apiError: ScanError = {
-        message:
-          err instanceof Error ? err.message : "An unknown error occurred.",
-      };
+      let message = "An unknown error occurred.";
+      let resetAt: number | undefined = undefined;
+
+      if (err instanceof Error) {
+        message = err.message;
+        // This is a type-safe way to check for our custom property
+        if (
+          typeof err === "object" &&
+          err &&
+          "resetAt" in err &&
+          typeof err.resetAt === "number"
+        ) {
+          resetAt = err.resetAt;
+        }
+      }
+
+      const apiError: ScanError = { message, resetAt };
       set({ error: apiError, status: "error" });
     }
   },

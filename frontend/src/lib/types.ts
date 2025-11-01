@@ -51,4 +51,5 @@ export type ScanStatus = "idle" | "loading" | "success" | "error";
 export interface ScanError {
   message: string;
   status?: number; // 404, 429, etc.
+  resetAt?: number;
 }

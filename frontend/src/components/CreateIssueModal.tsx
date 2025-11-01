@@ -4,6 +4,7 @@ import { createIssue } from "../lib/githubApi";
 import { buildIssueBody } from "../lib/issueTemplate";
 import "./CreateIssueModal.css";
 import { ErrorBanner } from "./ErrorBanner";
+import type { ScanError } from "../lib/types";
 
 interface CreateIssueModalProps {
   onClose: () => void;
@@ -12,7 +13,7 @@ interface CreateIssueModalProps {
 export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
   const [pat, setPat] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ScanError | null>(null);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
 
   const { selectedRepo, scanResult } = useScanStore();
@@ -24,7 +25,7 @@ export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pat) {
-      setError("A Personal Access Token is required.");
+      setError({ message: "A Personal Access Token is required." });
       return;
     }
 
@@ -36,7 +37,9 @@ export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
       const url = await createIssue(selectedRepo.fullName, issueBody, pat);
       setSuccessUrl(url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create issue");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to create issue",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +94,7 @@ export function CreateIssueModal({ onClose }: CreateIssueModalProps) {
           <button type="submit" disabled={isLoading} className="submit-btn">
             {isLoading ? "Creating..." : "Create Issue"}
           </button>
-          {error && <ErrorBanner message={error} />}
+          {error && <ErrorBanner error={error} />}
         </form>
       </div>
     </div>

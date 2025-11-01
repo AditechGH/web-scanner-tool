@@ -24,9 +24,22 @@ export const scanRepository = async (
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      const apiError = error.response.data as { detail: string };
-      throw new Error(apiError.detail || "An unknown API error occurred.");
+      const apiError = error.response.data as {
+        detail: string;
+        resetAt?: number;
+      };
+
+      const customError = new Error(
+        apiError.detail || "An unknown API error occurred."
+      ) as Error & { resetAt?: number };
+      customError.resetAt = apiError.resetAt;
+
+      throw customError;
     }
-    throw new Error("A network error occurred. Is the backend server running?");
+
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("An unknown error occurred.");
   }
 };
