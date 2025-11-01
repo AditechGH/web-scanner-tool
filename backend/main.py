@@ -84,8 +84,8 @@ async def scan_repository(request: ScanRequest):
         return JSONResponse(
             status_code=429,
             content={
-                "detail": f"GitHub API rate limit exceeded. {e}",
-                "resetAt": reset_time  # Pass the reset time to the frontend
+                "detail": "GitHub API rate limit exceeded. Please wait for the reset or add a GitHub PAT to increase your limit.",
+                "resetAt": reset_time
             }
         )
 

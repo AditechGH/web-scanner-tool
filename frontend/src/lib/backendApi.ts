@@ -31,8 +31,9 @@ export const scanRepository = async (
 
       const customError = new Error(
         apiError.detail || "An unknown API error occurred."
-      ) as Error & { resetAt?: number };
+      ) as Error & { resetAt?: number; status?: number };
       customError.resetAt = apiError.resetAt;
+      customError.status = error.response.status;
 
       throw customError;
     }

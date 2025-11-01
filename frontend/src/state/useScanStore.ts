@@ -16,7 +16,7 @@ interface ScanState {
 
   // Actions
   selectRepo: (repo: RepoLite | null) => void;
-  startScan: () => Promise<void>;
+  startScan: (token?: string) => Promise<void>;
   clearScan: () => void;
 }
 
@@ -48,29 +48,26 @@ export const useScanStore = create<ScanState>((set, get) => ({
    * from the state, calls the backend API, and updates
    * the state with the result or an error.
    */
-  startScan: async () => {
+  startScan: async (token: string | null = null) => {
     const { selectedRepo } = get();
     if (!selectedRepo) return;
 
-    // 1. Set loading state
     set({ status: "loading", error: null, scanResult: null });
 
     try {
-      // 2. Call the API
       const result = await scanRepository(
         selectedRepo.owner,
-        selectedRepo.name
+        selectedRepo.name,
+        token
       );
-
-      // 3. Set success state
       set({ scanResult: result, status: "success" });
     } catch (err) {
       let message = "An unknown error occurred.";
       let resetAt: number | undefined = undefined;
+      let status: number | undefined = undefined;
 
       if (err instanceof Error) {
         message = err.message;
-        // This is a type-safe way to check for our custom property
         if (
           typeof err === "object" &&
           err &&
@@ -79,9 +76,18 @@ export const useScanStore = create<ScanState>((set, get) => ({
         ) {
           resetAt = err.resetAt;
         }
+
+        if (
+          typeof err === "object" &&
+          err &&
+          "status" in err &&
+          typeof err.status === "number"
+        ) {
+          status = err.status;
+        }
       }
 
-      const apiError: ScanError = { message, resetAt };
+      const apiError: ScanError = { message, resetAt, status };
       set({ error: apiError, status: "error" });
     }
   },

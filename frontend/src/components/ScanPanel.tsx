@@ -3,6 +3,7 @@ import { useScanStore } from "../state/useScanStore";
 import { ErrorBanner } from "./ErrorBanner";
 import { FindingsTable } from "./FindingsTable";
 import { CreateIssueModal } from "./CreateIssueModal";
+import { RateLimitPanel } from "./RateLimitPanel";
 import "./ScanPanel.css";
 
 export function ScanPanel() {
@@ -16,7 +17,7 @@ export function ScanPanel() {
   // and then triggers it.
   useEffect(() => {
     if (status === "idle") {
-      startScan();
+      startScan(); // Start the initial scan (unauthenticated)
     }
   }, [status, startScan]);
 
@@ -33,6 +34,15 @@ export function ScanPanel() {
 
   // 2. Show Error State
   if (status === "error" && error) {
+    // Check for 429 status
+    if (error.status === 429) {
+      return (
+        <div className="scan-panel">
+          <RateLimitPanel error={error} />
+        </div>
+      );
+    }
+    // Otherwise, show the normal error
     return (
       <div className="scan-panel">
         <ErrorBanner error={error} />

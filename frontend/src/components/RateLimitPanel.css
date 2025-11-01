@@ -1,0 +1,69 @@
+.rate-limit-panel {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #3a3a3a;
+  border-radius: 8px;
+  border: 1px solid #ffc400;
+}
+
+.rate-limit-panel h3 {
+  margin-top: 0;
+  color: #ffc400;
+}
+
+.option-box {
+  background-color: #2e2e2e;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  text-align: left;
+}
+.option-box h4 {
+  margin: 0 0 0.5rem 0;
+}
+.option-box p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.token-form {
+  margin-top: 1rem;
+}
+.token-form .pat-input {
+  /* Re-use styles from modal */
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #1e1e1e;
+  color: white;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+.token-form .submit-btn {
+  /* Re-use styles from modal */
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+}
+.token-form .submit-btn:disabled {
+  background-color: #555;
+}
+
+.token-form .pat-input.invalid {
+  border-color: #d8000c;
+  outline-color: #d8000c;
+}
+
+.token-error-msg {
+  font-size: 0.85rem;
+  color: #f8baba;
+  margin-bottom: 0.5rem;
+}

@@ -90,6 +90,7 @@ class GitHubClient:
                         remaining=int(response.headers["X-RateLimit-Remaining"]),
                         reset_at=int(response.headers["X-RateLimit-Reset"]),
                     )
+                    logger.info(f"Rate limit updated: {self._rate_info.remaining} remaining, resets at {self._rate_info.reset_at}")
                 except ValueError:
                     pass 
 
