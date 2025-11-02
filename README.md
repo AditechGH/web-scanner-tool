@@ -43,14 +43,15 @@ This project was built to demonstrate a production-ready, test-driven, and well-
 cd backend
 
 # Create a virtual environment
-python3 -m venv .venv
+python -m venv .venv
 
 # Activate the venv (OS-specific)
-# See official Python docs for your OS: 
-# [https://docs.python.org/3/tutorial/venv.html](https://docs.python.org/3/tutorial/venv.html)
-#
-# e.g., on macOS/Linux:  source .venv/bin/activate
-# e.g., on Windows CMD:   .venv\Scripts\activate.bat
+# On macOS/Linux:
+source .venv/bin/activate
+# On Windows (Command Prompt):
+.venv\Scripts\activate.bat
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
 
 # Install dependencies
 pip install -r requirements.txt
@@ -80,6 +81,21 @@ npm run dev
 ```
 
 The frontend will be running at `http://localhost:5173`.
+
+---
+
+## 📚 API Documentation
+
+When the backend is running, explore the interactive API documentation:
+
+* **Swagger UI**: <http://127.0.0.1:8000/docs> - Interactive API explorer
+* **ReDoc**: <http://127.0.0.1:8000/redoc> - Alternative documentation view
+
+Both interfaces allow you to:
+
+* Test API endpoints directly from your browser
+* View request/response schemas
+* Understand optional parameters (like GitHub token for rate limits)
 
 ---
 
